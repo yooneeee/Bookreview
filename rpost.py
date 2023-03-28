@@ -10,11 +10,6 @@ db = client.dbsparta
 import requests
 from bs4 import BeautifulSoup
 
-#메인 페이지
-@app.route('/')
-def home():
-    return render_template('home.html')
-
 #리뷰 등록 페이지로 이동
 @app.route('/rpage')
 def reviewPost_Page():
