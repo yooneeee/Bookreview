@@ -35,9 +35,10 @@ def api_register():
     existing_user = db.users.find_one({'id': id_receive})
     if existing_user is not None:
         return jsonify({'result': 'fail', 'msg': '이미 존재하는 아이디입니다.'})
+       
     
-    # 패스워드 암호화 / sha256 방법(=단방향 암호화. 풀어볼 수 없음)
-    pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+     # 패스워드 암호화 / sha256 방법(=단방향 암호화. 풀어볼 수 없음)
+    pw_hash = hashlib.sha256(pw_receive.encode('UTF-8')).hexdigest()
 
     db.users.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive})
     
@@ -52,7 +53,7 @@ def api_login():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
 
-    pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
+    pw_hash = hashlib.sha256(pw_receive.encode('UTF-8')).hexdigest()
 
     result = db.users.find_one({'id': id_receive, 'pw': pw_hash})
 # --------------------------------------------------------------------- 작업중>
@@ -74,8 +75,6 @@ CORS(app)
 @app.route('/nick', methods=['GET'])
 def api_valid():
     token_receive = request.cookies.get('mytoken')
-
-    
 
     try:
         # token을 시크릿키로 디코딩

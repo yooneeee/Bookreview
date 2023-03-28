@@ -7,7 +7,7 @@
     <title>로그인</title>
 
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bulma CSS -->
@@ -34,7 +34,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/login",
+                url: "http://127.0.0.1:5000/login",
                 data: { id_give: $('#userid').val(), pw_give: $('#userpw').val() },
                 success: function (response) {
                     if (response.result == 'success') {
