@@ -16,29 +16,25 @@ import jwt
 import datetime
 # 회원가입시 비밀번호 데이터 암호화
 import hashlib
-
+from flask_cors import CORS
 SECRET_KEY = 'BOOKREVIEW'
 
+CORS(app)
 @app.route('/')
 def home():
     return render_template('index.html')
-    
-@app.route('/login')
-def login():
-    msg = request.args.get("msg")
-    return render_template('login.html', msg=msg)
 
-
-@app.route('/register')
-def register():
-    return render_template('register.html')
-
-@app.route('/api/register', methods=['POST'])
 # [회원가입 API]
+CORS(app)
+@app.route('/register', methods=['POST'])
 def api_register():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
     nickname_receive = request.form['nickname_give']
+
+    existing_user = db.users.find_one({'id': id_receive})
+    if existing_user is not None:
+        return jsonify({'result': 'fail', 'msg': '이미 존재하는 아이디입니다.'})
     
     # 패스워드 암호화 / sha256 방법(=단방향 암호화. 풀어볼 수 없음)
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
@@ -50,7 +46,8 @@ def api_register():
     
 # [로그인 API]
 # id, pw를 받아서 맞춰 본 뒤 토큰 발급
-@app.route('/api/login', methods=['POST'])
+CORS(app)
+@app.route('/login', methods=['POST'])
 def api_login():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
@@ -60,10 +57,9 @@ def api_login():
     result = db.users.find_one({'id': id_receive, 'pw': pw_hash})
 # --------------------------------------------------------------------- 작업중>
     if result is not None:
-        # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'id': id_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=10)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -73,8 +69,9 @@ def api_login():
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
-        
-@app.route('/api/nick', methods=['GET'])
+
+CORS(app)        
+@app.route('/nick', methods=['GET'])
 def api_valid():
     token_receive = request.cookies.get('mytoken')
 

@@ -18,28 +18,37 @@
 
 
     <script>
-        {% if msg %}
-        alert("{{ msg }}")
-        {% endif %}
-
         function login() {
+            const id = $('#userid').val();
+            const pw = $('#userpw').val();
+
+            if (!id) {
+                alert('아이디를 입력해주세요.');
+                return;
+            }
+
+            if (!pw) {
+                alert('비밀번호를 입력해주세요.');
+                return;
+            }
+
             $.ajax({
                 type: "POST",
-                url: "/api/login",
+                url: "/login",
                 data: { id_give: $('#userid').val(), pw_give: $('#userpw').val() },
                 success: function (response) {
-                    if (response['result'] == 'success') {
+                    if (response.result == 'success') {
 
-                        $.cookie('mytoken', response['token']);
+                        $.cookie('mytoken', response.token);
 
-                        alert('로그인 완료!')
-                        window.location.href = '/'
+                        alert('로그인 되었습니다!');
+                        window.location.href = 'index.html';
                     } else {
 
-                        alert(response['msg'])
+                        alert(response.msg);
                     }
                 }
-            })
+            });
         }
 
     </script>
@@ -57,8 +66,7 @@
                 <div class="field-body">
                     <div class="field">
                         <div class="control">
-                            <input type="text" class="input" id="userid" aria-describedby="emailHelp"
-                                placeholder="My ID">
+                            <input type="text" class="input" id="userid" placeholder="My ID">
                         </div>
                     </div>
                 </div>
