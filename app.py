@@ -1,11 +1,11 @@
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 app = Flask(__name__)
 
+
 from pymongo import MongoClient
 client = MongoClient('mongodb+srv://sparta:test@sparta.1hlyrob.mongodb.net/?retryWrites=true&w=majority')
 db = client.dbsparta
 
-SECRET_KEY = 'BOOKREVIEW'
 
 import jwt
 # 토근 만료시간 부여를 위한 datetime 사용
@@ -13,8 +13,7 @@ import datetime
 # 회원가입시 비밀번호 데이터 암호화
 import hashlib
 
-import certifi
-ca=certifi.where()
+SECRET_KEY = 'BOOKREVIEW'
 
 @app.route('/')
 def home():
@@ -42,6 +41,7 @@ def api_register():
 
     db.users.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive})
 
+    
     return jsonify({'result': 'success'})
     
 # [로그인 API]
@@ -53,7 +53,7 @@ def api_login():
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
-    result = db.user.find_one({'id': id_receive, 'pw': pw_hash})
+    result = db.users.find_one({'id': id_receive, 'pw': pw_hash})
 # --------------------------------------------------------------------- 작업중>
     if result is not None:
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
