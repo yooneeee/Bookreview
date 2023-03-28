@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                crossorigin="anonymous"></script>
+    
+        <title>도서 리뷰</title>
+    
+        <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    
+        <style>
+            * {
+                font-family: 'Gowun Dodum', sans-serif;
+            }
+            
+            .mytitle {
+                width: 100%;
+                height: 250px;
+    
+                background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjk_952gQSjsH0_wbooDm1BSqorGpN-cCFMQ&amp;usqp=CAU');
+                background-position: center;
+                background-size: cover;
+    
+                color: white;
+    
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+    
+            .button {
+                width: 800px;
+                height: 300px;
+    
+                background-color: transparent;
+                color: white;
+    
+                border-radius: 50px;
+                border: 1px solid white;
+    
+                margin-top: 10px;
+            }
+    
+            .mytitle > button:hover {
+                border: 2px solid white;
+            }
+
+            .mybtns {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+
+                margin-top: 20px;
+            }
+            
+            .mybtns > button {
+                margin-right: 10px;
+            }
+
+            .mytitle > div.container  {
+                width: auto;
+                margin-right: 20px;
+                margin-top: 20px;
+                margin-bottom: auto;
+            }
+
+            .mytitle > h1 {
+                margin-bottom: auto;
+            }
+
+            .btn {
+                background-color: white;
+                border: 1px solid white;
+                padding: 0.1rem 1rem;
+            }
+
+        </style>
+        <script>
+        
+            function register() {
+                window.location.href = 'http://127.0.0.1:5500/templates/register.html'
+            }
+            
+            function login() {
+                window.location.href = 'http://127.0.0.1:5500/templates/login.html'
+            }
+    
+        </script>
+    </head>
+    <body>
+        <div class="mytitle" id="header">
+            <div class="container">
+                <div class = "header">
+                    <div class="header-menu">
+                        <button type="button" class="btn btn-outline-dark" onclick="login()">로그인</button>
+                        <button type="button" class="btn btn-outline-dark" onclick="register()">회원가입</button>
+                    </div>
+                </div>
+            </div>
+            <h1>Book Review</h1>
+        </div>
+        
+        </body>
+</html>
