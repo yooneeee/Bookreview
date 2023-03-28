@@ -19,6 +19,7 @@ def home():
 @app.route('/rpage')
 def reviewPost_Page():
     return render_template('review.html')
+#상세 페이지로 이동
 @app.route('/detail')
 def detail_Page():
     return render_template('detail.html')
@@ -50,11 +51,13 @@ def review_post():
     }
     db.breviews.insert_one(doc)
     return jsonify({'msg':'등록 완료!'})
+#도서 상세, 리뷰 불러오기
 @app.route("/bookreview", methods=["GET"])
 def book_get():
     all_books = list(db.breviews.find({},{'_id':False}))
     return jsonify({'result':all_books})
 
+#댓글 등록
 @app.route("/comment", methods=["POST"])
 def comment_post():
     comment_receive = request.form['comment_give']
@@ -67,6 +70,7 @@ def comment_post():
     }
     db.comments.insert_one(doc)
     return jsonify({'msg':'댓글 쓰기 완료!'})
+#댓글 읽어오기
 @app.route("/comment", methods=["GET"])
 def comment_get():
     all_comments = list(db.comments.find({},{'_id':False}))
@@ -76,6 +80,7 @@ if __name__ == '__main__':
     app.run('0.0.0.0', port=5001, debug=True)
 
 # mongodbautoincrement
+
 
 
 
