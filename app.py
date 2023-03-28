@@ -6,6 +6,10 @@ from pymongo import MongoClient
 client = MongoClient('mongodb+srv://sparta:test@sparta.1hlyrob.mongodb.net/?retryWrites=true&w=majority')
 db = client.dbsparta
 
+import certifi
+
+ca=certifi.where()
+
 
 import jwt
 # 토근 만료시간 부여를 위한 datetime 사용
