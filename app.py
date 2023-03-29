@@ -34,7 +34,10 @@ def api_register():
 
     existing_user = db.users.find_one({'id': id_receive})
     if existing_user is not None:
-        return jsonify({'result': 'fail', 'msg': '이미 존재하는 아이디입니다.'})
+        return jsonify({'result': 'fail', 'msg': '이미 가입된 아이디입니다.'})
+    existing_user_nickname = db.users.find_one({'nick': nickname_receive})
+    if existing_user_nickname is not None:
+        return jsonify({'result': 'fail', 'msg': '이미 가입된 닉네임입니다.'})
        
     
      # 패스워드 암호화 / sha256 방법(=단방향 암호화. 풀어볼 수 없음)
