@@ -61,14 +61,52 @@
     </style>
     <script>
       $(document).ready(function () {
-        listing();
+        show_detail();
         show_comment();
       });
 
-      function listing() {
-        fetch("/bookreview")
-          .then((res) => res.json())
-          .then((data) => {
+      //   const bookDetailGet = () => {
+      //     $.ajax({
+      //       type: "GET",
+      //       url: "/detail",
+      //       data: {},
+      //       success: function (response) {
+      //         response["detail"].map((detail) => {
+      //           if (breviews.keyid === Number(a)) {
+      //             detail_html += `<div class="card mb-3">
+      //                                 <div class="row g-0">
+      //                                 <div class="col-md-4">
+      //                                     <img
+      //                                     src="${image}"
+      //                                     class="img-fluid rounded-start"
+      //                                     alt="책사진"
+      //                                     />
+      //                                 </div>
+      //                                 <div class="col-md-8">
+      //                                     <div class="card-body">
+      //                                     <h5 class="card-title" style="font-weight:bold">${title}</h5>
+      //                                     <p class="card-text">${desc}</p>
+      //                                     </div>
+      //                                 </div>
+      //                                 </div>
+      //                             </div>
+      //                             <div class="review">
+      //                                 <div>${star_repeat}</div>
+      //                                 <h5>${comment}</h5>
+      //                             </div>`;
+      //           }
+      //         });
+      //         $("#book-detail").append(detail_html);
+      //       },
+      //     });
+      //   };
+
+      function show_detail() {
+        $.ajax({
+          type: "GET",
+          url: `/detail`,
+          data: {},
+          success: function (response) {
             let rows = data["result"];
             $("#book-detail").empty();
             rows.forEach((a) => {
@@ -78,70 +116,115 @@
               let desc = a["desc"];
               let image = a["image"];
               let star = a["star"];
+              let nickname = a["nickname"];
 
               let star_repeat = "⭐".repeat(star);
 
               let temp_html = `<div class="card mb-3">
-                                    <div class="row g-0">
-                                    <div class="col-md-4">
-                                        <img
-                                        src="${image}"
-                                        class="img-fluid rounded-start"
-                                        alt="책사진"
-                                        />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card-body">
-                                        <h5 class="card-title" style="font-weight:bold">${title}</h5>
-                                        <p class="card-text">${desc}</p>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="review">
-                                    <div>${star_repeat}</div>
-                                    <h5>${comment}</h5>
-                                </div>`;
+                                      <div class="row g-0">
+                                      <div class="col-md-4">
+                                          <img
+                                          src="${image}"
+                                          class="img-fluid rounded-start"
+                                          alt="책사진"
+                                          />
+                                      </div>
+                                      <div class="col-md-8">
+                                          <div class="card-body">
+                                          <h5 class="card-title" style="font-weight:bold">${title}</h5>
+                                          <p class="card-text">${desc}</p>
+                                          </div>
+                                      </div>
+                                      </div>
+                                  </div>
+                                  <div class="review">
+                                      <div>${star_repeat}</div>
+                                      <div>${nickname}</div>
+                                      <h5>${comment}</h5>
+                                  </div>`;
               $("#book-detail").append(temp_html);
             });
-          });
+          },
+        });
       }
-      function save_comment() {
+
+      function save_comment(postid) {
         let comment = $("#comment").val();
-        // let nickname = $("#nickname").val();
 
-        let formData = new FormData();
-        formData.append("comment_give", comment);
-        // formData.append("nickname_give", nickname);
-
-        fetch("/comment", { method: "POST", body: formData })
-          .then((res) => res.json())
-          .then((data) => {
-            alert(data["msg"]);
+        $.ajax({
+          type: "POST",
+          url: `/comment`,
+          data: { comment_give: comment, postid_give: postid },
+          success: function (response) {
+            let msg = response["result"];
+            // 페이지 새로고침 (포스트에)
             window.location.reload();
-          });
+          },
+        });
       }
-      function show_comment() {
-        fetch("/comment")
-          .then((res) => res.json())
-          .then((data) => {
-            let rows = data["result"];
-            $("#comment-list").empty();
-            rows.forEach((a) => {
-              // let nicknake=a['nickname']
-              let comment = a["comment"];
 
-              let temp_html = `<div class="card">
-                                    <div class="card-body">
-                                        <blockquote class="blockquote mb-0">
-                                            <p>${comment}</p>
-                                            <footer class="blockquote-footer">호빵맨</footer>
-                                        </blockquote>
-                                    </div>
-                                </div>`;
-              $("#comment-list").append(temp_html);
+      //   function show_comment(postkid) {
+      //     fetch("/comment")
+      //       .then((res) => res.json())
+      //       .then((data) => {
+      //         let rows = data["result"];
+      //         $("#comment-list").empty();
+      //         rows.forEach((a) => {
+      //           let nicknake = a["nickname"];
+      //           let comment = a["comment"];
+
+      //           let temp_html = `<div class="card">
+      //                                 <div class="card-body">
+      //                                     <blockquote class="blockquote mb-0">
+      //                                         <p>${comment}</p>
+      //                                         <footer class="blockquote-footer">${nickname}</footer>
+      //                                     </blockquote>
+      //                                 </div>
+      //                             </div>`;
+      //           $("#comment-list").append(temp_html);
+      //         });
+      //       });
+      //   }
+
+      // 디테일 페이지 - 댓글보여주기
+      function show_comment(postid) {
+        console.log(postid);
+        $.ajax({
+          type: "GET",
+          url: `/detail`,
+          data: {},
+          success: function (response) {
+            $.ajax({
+              type: "GET",
+              url: `/comment`,
+              data: {},
+              success: function (response) {
+                // 전체 comment에서 현재포스트(postid)의 댓글만 보여줄 수 있게함
+                let current_list = list.filter((item, idx, arr) => {
+                  return item.postid === postid;
+                  // console.log(Number(item.theater_id) === Number(id))
+                });
+                // 해당 페이지의 id가 있는 DB만 보여주기
+                if (current_list) {
+                  for (let i = 0; i < current_list.length; i++) {
+                    // console.log(list[i])
+                    let user = current_list[i]["nickname"];
+                    let comment = current_list[i]["comment"];
+                    let post_id = current_list[i]["postid"];
+                    let temp_html = `
+                      <div class="review_card">
+                          <div class="review_view">
+                              <p class="review_view_id">${user}</p>
+                              <p class="review_view_text">${review}</p>
+                          </div>
+                      </div>`;
+                    $("#culture_review_show").append(temp_html);
+                  }
+                }
+              },
             });
-          });
+          },
+        });
       }
     </script>
   </head>
@@ -183,7 +266,9 @@
         maxlength="50"
         placeholder="댓글을 남겨보세요!"
       />
-      <button type="button" class="btn btn-success">확인</button>
+      <button type="button" class="btn btn-success" onclick="save_comment()">
+        확인
+      </button>
     </div>
     <div class="mycards" id="comment-list">
       <div class="card">

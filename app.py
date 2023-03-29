@@ -30,17 +30,24 @@ def main():
     isLoggedIn = False
     return render_template("index.html", isLoggedIn=isLoggedIn)
 
+@app.route("/book", methods=["GET"])
+def book_get():
+    all_books = list(db.breviews.find({},{'_id':False}))
+    return jsonify({'result':all_books})
+
 #리뷰 등록 페이지로 이동
 @app.route('/rpage')
 def reviewPost_Page():
     return render_template('review.html')
 
-#리뷰 등록
+#도서 리뷰 등록
 @app.route("/rbook", methods=["POST"])
 def posting():
     url_receive = request.form['url_give']
     comment_receive = request.form['comment_give']
     star_receive = request.form['star_give']
+    id_receive = request.form['id_give']
+    nick_receive = request.form['nick_give']
     uid = uuid.uuid4()
 
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -58,7 +65,9 @@ def posting():
         'image':ogimage,
         'comment':comment_receive,
         'star':star_receive,
-        'postid': str(uid)
+        'postid': str(uid),
+        'nick': nick_receive,
+        'id':id_receive
     }
     db.breviews.insert_one(doc)
     return jsonify({'msg':'등록 완료!'})
@@ -70,30 +79,41 @@ def detail_Page():
 
 #key_id 값 불러와 도서 상세, 리뷰 불러오기
 @app.route("/bookreview", methods=["GET"])
-def book_get(7b5c033a-caa7-481a-b97d-b6c6d7e5b123 ):
+def book_detail(postid):
     book_detail = db.breviews.find_one({'postid': postid},{'_id':False})
-    return jsonify({'result':book_detail}), render_template('detail.html')
+    return jsonify({'result':book_detail})
 
 #댓글 등록 => bookid받아올 수 있나?
 @app.route("/comment", methods=["POST"])
 def comment_post(postid):
-    comment_receive = request.form['comment_give']
-    # nickname_receive = request.form['nickname_give']
-    postid=postid
+    token_receive = request.cookies.get('mytoken')
+    try:
+        # token을 시크릿키로 디코딩
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])       
+        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+        comment_receive = request.form['comment_give']
+        postid=postid
 
-    doc={
-        # 'nickname':nickname_receive
-        'comment': comment_receive,
-        'postid': postid
-    }
-    db.comments.insert_one(doc)
-    return jsonify({'msg':'댓글 쓰기 완료!'})
+        doc={
+            'nickname':userinfo['nick'],
+            'comment': comment_receive,
+            'postid': postid
+        }
+        db.comments.insert_one(doc)
+
+        return jsonify({'result': 'success', 'msg': '댓글 작성 완료!' })
+    
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
+    except jwt.exceptions.DecodeError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    
 
 #댓글 읽어오기 => 책 id의 comments들만 보이게, 근데 comment DB랑 리뷰 DB랑 다른 곳 어떻게 해결? 
 @app.route("/comment", methods=["GET"])
-def comment_get(keyid):
-    all_comments = list(db.comments.find({},{'_id':False}))
-    return jsonify({'result':all_comments})
+def comment_get(postid):
+    comment_list = list(db.comments.find({},{'_id':False}))
+    return jsonify({'comment_list':comment_list})
 
 
 #로그인 페이지로 이동
