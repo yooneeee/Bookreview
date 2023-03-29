@@ -23,7 +23,7 @@
         
         .mytitle {
             width: 100%;
-            height: 250px;
+            height: 220px;
 
             background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjk_952gQSjsH0_wbooDm1BSqorGpN-cCFMQ&amp;usqp=CAU');
             background-position: center;
@@ -88,6 +88,29 @@
         .form-floating > textarea.form-control {
             min-height: calc(12em + (0.75rem + 3px));
         }
+
+        .mytitle > div.container  {
+            width: auto;
+            margin-right: 20px;
+            margin-top: 20px;
+            margin-bottom: auto;
+        }
+
+        .mytitle > h1 {
+            margin-bottom: 100px;
+        }
+
+        .btn {
+            background-color: white;
+            border: 1px solid black;
+            padding: 0.1rem 1rem;
+            margin-left: 1px;
+            margin-right: 1px;
+        }
+
+        .header-menu {
+            display: flex;
+        }
     </style>
     <script>
 
@@ -100,14 +123,13 @@
             let url = $('#url').val()
             let comment = $('#comment').val()
             let star = $('#star').val()
-            // ***아이디 또는 닉네임 값 받기***
 
 			let formData = new FormData();
             formData.append("url_give", url);
             formData.append("comment_give", comment);
             formData.append("star_give", star);
 
-            fetch('/book', {method : "POST",body : formData}).then((res) => res.json()).then((data) => {
+            fetch('/rbook', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
                 alert(data['msg'])
                 window.location.replace('/')
             })
@@ -130,39 +152,70 @@
             window.location.replace('/')
         }
 
+        //로그인 여부에 따라 다르게 보여지도록
+        $(document).ready(function(){
+            let isLoggedIn = false; 
+
+            let loginBtn = document.getElementById("loginBtn");
+            let registerBtn = document.getElementById("registerBtn");
+            let welcomeMsg = document.getElementById("welcomeMsg");   
+
+            if (loginId == null) {
+                welcomeMsg.style.display = "block";
+                loginBtn.style.display = "none";
+                registerBtn.style.display = "none";
+            } else {
+                welcomeMsg.style.display = "none";
+                loginBtn.style.display = "block";
+                registerBtn.style.display = "block";
+            }
+        });
+
     </script>
 </head>
 
 <body>
-<div class="mytitle">
-    <h1>Book Review</h1>
-</div>
-<div class="mypost" id="post-box">
-    <div class="form-floating mb-3">
-        <input id="url" type="email" class="form-control" placeholder="name@example.com">
-        <label>도서URL</label>
+    <div class="mytitle">
+        <div class="container" id="header">
+            <div class = "header">
+                <div class="header-menu">
+                    <!-- 로그인 안했을 경우 -->
+                    <button type="button" class="btn btn-outline-dark" id="loginBtn" onclick="login()">로그인</button>
+                    <button type="button" class="btn btn-outline-dark" id="registerBtn" onclick="register()">회원가입</button>
+                    <!-- 로그인 했을 경우 -->
+                    <button type="button" class="btn btn-outline-dark" style="display: none;" id="welcomeMsg" onclick="">로그아웃</button>
+                </div>
+            </div>
+        </div>
+        <h1>Book Review</h1>
     </div>
-    <div class="input-group mb-3">
-        <label class="input-group-text" for="inputGroupSelect01">별점</label>
-        <select class="form-select" id="star">
-            <option selected>-- 선택하기 --</option>
-            <option value="1">⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="5">⭐⭐⭐⭐⭐</option>
-        </select>
+
+    <div class="mypost" id="post-box">
+        <div class="form-floating mb-3">
+            <input id="url" type="email" class="form-control" placeholder="name@example.com">
+            <label>도서URL</label>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01">별점</label>
+            <select class="form-select" id="star">
+                <option selected>-- 선택하기 --</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+        </div>
+        <div class="form-floating">
+            <textarea id="comment" class="form-control" placeholder="Leave a comment here"></textarea>
+            <label for="floatingTextarea2">리뷰를 남겨 주세요!</label>
+            <div id="test_cnt">(0 / 100)</div>
+        </div>
+        <div class="mybtns">
+            <button onclick="posting()" type="button" class="btn btn-outline-dark">등록하기</button>
+            <button onclick="cancel()" type="button" class="btn btn-outline-dark">취소</button>
+        </div>
     </div>
-    <div class="form-floating">
-        <textarea id="comment" class="form-control" placeholder="Leave a comment here"></textarea>
-        <label for="floatingTextarea2">리뷰를 남겨 주세요!</label>
-        <div id="test_cnt">(0 / 100)</div>
-    </div>
-    <div class="mybtns">
-        <button onclick="posting()" type="button" class="btn btn-dark">등록하기</button>
-        <button onclick="cancel()" type="button" class="btn btn-outline-dark">취소</button>
-    </div>
-</div>
 </body>
 
 </html>
