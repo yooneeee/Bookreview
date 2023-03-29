@@ -25,22 +25,21 @@ import uuid
 CORS(app)
 @app.route("/")
 def main():
-    # id_receive = request.form['id_give']
-    # loginId = db.users.find_one(id_receive)
-    isLoggedIn = False
-    return render_template("home.html", isLoggedIn=isLoggedIn)
-
-#리뷰 등록 페이지로 이동
+    return render_template('home.html')
+    
+#도서 리뷰 등록 페이지로 이동
 @app.route('/rpage')
 def reviewPost_Page():
     return render_template('review.html')
 
-#리뷰 등록
+#도서 리뷰 등록
 @app.route("/rbook", methods=["POST"])
 def posting():
     url_receive = request.form['url_give']
     comment_receive = request.form['comment_give']
     star_receive = request.form['star_give']
+    id_receive = request.form['id_give']
+    nick_receive = request.form['nick_give']
     uid = uuid.uuid4()
 
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -58,12 +57,20 @@ def posting():
         'image':ogimage,
         'comment':comment_receive,
         'star':star_receive,
-        'keyid': str(uid)
+        'keyid': str(uid),
+        'nick': nick_receive,
+        'id':id_receive
     }
     db.breviews.insert_one(doc)
     return jsonify({'msg':'등록 완료!'})
 
-#상세 페이지로 이동
+#도서 리스트 불러오기
+@app.route("/rbook", methods=["GET"])
+def book_gets():
+    books = list(db.breviews.find({},{'_id':False}))
+    return jsonify({'result':books})
+
+#도서 상세 페이지로 이동
 @app.route('/detail')
 def detail_Page():
     return render_template('detail.html')
@@ -93,7 +100,6 @@ def comment_post():
 def comment_get():
     all_comments = list(db.comments.find({},{'_id':False}))
     return jsonify({'result':all_comments})
-
 
 #로그인 페이지로 이동
 @app.route('/login')
@@ -141,11 +147,11 @@ def api_login():
     pw_hash = hashlib.sha256(pw_receive.encode('UTF-8')).hexdigest()
 
     result = db.users.find_one({'id': id_receive, 'pw': pw_hash})
-# --------------------------------------------------------------------- 작업중>
+
     if result is not None:
         payload = {
             'id': id_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=10)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -164,14 +170,15 @@ def api_valid():
     try:
         # token을 시크릿키로 디코딩
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        
-        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-        return jsonify({'result': 'success', 'nickname': userinfo['nick']})
+        userinfo = db.users.find_one({'id': payload['id']}, {'_id': 0})
+
+        return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'userid': userinfo['id']})
     except jwt.ExpiredSignatureError:
         
         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5001, debug=True)
