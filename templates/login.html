@@ -18,6 +18,10 @@
 
 
     <script>
+        function back_mian() {
+            window.location.href = 'index.html'
+        }
+        
         function login() {
             const id = $('#userid').val();
             const pw = $('#userpw').val();
@@ -84,6 +88,7 @@
                 </div>
             </div>
             <button class="button is-primary" onclick="login()">로그인</button>
+            <button class="button is-primary" onclick="back_mian()">메인화면</button>
         </div>
     </div>
 </body>
