@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -120,19 +120,32 @@
 
         //도서URL, 별점, 리뷰 등록
         function posting() {
-            let url = $('#url').val()
-            let comment = $('#comment').val()
-            let star = $('#star').val()
+            let isLoggedIn;
+            let keyid;
+            fetch('/nick')
+                .then((res) => res.json())
+                .then((data) => {
+                    isLoggedIn = data['nickname'];
+                    keyid = data['userid'];
+                    let url = $('#url').val()
+                    let comment = $('#comment').val()
+                    let star = $('#star').val()
 
-			let formData = new FormData();
-            formData.append("url_give", url);
-            formData.append("comment_give", comment);
-            formData.append("star_give", star);
+                    let formData = new FormData();
+                    formData.append("url_give", url);
+                    formData.append("comment_give", comment);
+                    formData.append("star_give", star);
+                    formData.append("nick_give", isLoggedIn);
+                    formData.append("id_give", keyid);
 
-            fetch('/rbook', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
-                alert(data['msg'])
-                window.location.replace('/')
-            })
+                    return fetch('/rbook', { method: "POST", body: formData })
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    alert(data['msg'])
+                    window.location.href = '/'
+                })
+                .catch((error) => console.error(error));
         }
 
         //글자 수 100으로 제한.
@@ -149,27 +162,33 @@
 
         //취소 클릭시 메인으로 이동
         function cancel() {
-            window.location.replace('/')
+            window.location.href = '/'
         }
 
         //로그인 여부에 따라 다르게 보여지도록
         $(document).ready(function(){
-            let isLoggedIn = false; 
-
-            let loginBtn = document.getElementById("loginBtn");
-            let registerBtn = document.getElementById("registerBtn");
-            let welcomeMsg = document.getElementById("welcomeMsg");   
-
-            if (loginId == null) {
-                welcomeMsg.style.display = "block";
-                loginBtn.style.display = "none";
-                registerBtn.style.display = "none";
-            } else {
-                welcomeMsg.style.display = "none";
-                loginBtn.style.display = "block";
-                registerBtn.style.display = "block";
-            }
-        });
+                fetch('/nick').then((res) => res.json()).then((data) => {
+                    let isLoggedIn = data['nickname']
+                
+                    if (isLoggedIn == null) {
+                        let temp_html = `<div class = "header">
+                                            <div class="header-menu">
+                                                <button type="button" class="btn btn-outline-dark" id="loginBtn" onclick="login()">로그인</button>
+                                                <button type="button" class="btn btn-outline-dark" id="registerBtn" onclick="register()">회원가입</button>
+                                            </div>
+                                        </div>`
+                        $("#header").append(temp_html);                
+                    } else {
+                        let temp_html = `<div class = "header">
+                                            <div class="header-menu">
+                                                <p>${isLoggedIn}님 환영합니다.<p>
+                                                <button type="button" class="btn btn-outline-dark" style="display: none;" id="welcomeMsg" onclick="">로그아웃</button>
+                                            </div>
+                                        </div>`
+                        $("#header").append(temp_html);
+                    } 
+                })
+            });
 
     </script>
 </head>
@@ -179,11 +198,6 @@
         <div class="container" id="header">
             <div class = "header">
                 <div class="header-menu">
-                    <!-- 로그인 안했을 경우 -->
-                    <button type="button" class="btn btn-outline-dark" id="loginBtn" onclick="login()">로그인</button>
-                    <button type="button" class="btn btn-outline-dark" id="registerBtn" onclick="register()">회원가입</button>
-                    <!-- 로그인 했을 경우 -->
-                    <button type="button" class="btn btn-outline-dark" style="display: none;" id="welcomeMsg" onclick="">로그아웃</button>
                 </div>
             </div>
         </div>
