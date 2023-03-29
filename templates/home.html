@@ -152,7 +152,14 @@
 
             //도서 리뷰 등록 페이지로 이동
             function reviewPost_Page() {
-                window.location.href = "/rpage"
+                fetch('/nick').then((res) => res.json()).then((data) => {
+                    let loginId = data['userid']
+                        if(loginId != null) {
+                            window.location.href = "/rpage"
+                        }else {
+                            alert('로그인이 필요합니다!')
+                        } 
+                })
             }
 
             //도세 상세보기 페이지로 이동
