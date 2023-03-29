@@ -10,23 +10,23 @@ from bs4 import BeautifulSoup
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('home.html')
 
-@app.route('/login_page')
+@app.route('/login')
 def login_page():
-    return ('login_page')
+    return render_template('login.html')
 
-@app.route('/join_page')
+@app.route('/register')
 def join_page():
-    return ('join_page')
+    return render_template('register.html')
 
-@app.route('/review_page')
+@app.route('/rpage')
 def review_page():
-    return ('review_page')
+    return render_template('review.html')
 
-@app.route('/detail_page')
+@app.route('/detail')
 def detail_page():
-    return ('detail_page')
+    return render_template('detail.html')
 
 @app.route("/book", methods=["POST"])
 def book_post():
@@ -67,6 +67,7 @@ def book_post():
 def book_get():
     all_books = list(db.books.find({},{'_id':False}))
     return jsonify({'result':all_books})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
