@@ -1,3 +1,4 @@
+# 모듈 pymongo certifi flask PyJWT dnspython flask_cors 모듈 설치 필요
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 app = Flask(__name__)
 
