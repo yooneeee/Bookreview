@@ -127,7 +127,7 @@
           .then((data) => {
             let rows = data["result"];
             $("#comment-list").empty();
-            row.forEach((a) => {
+            rows.forEach((a) => {
               // let nicknake=a['nickname']
               let comment = a["comment"];
 
@@ -175,23 +175,15 @@
       </div>
     </div>
 
-    <div class="input-group mb-3">
+    <div class="comment" style="display: flex; justify-content: center">
       <input
         id="comment"
         type="text"
-        class="form-control"
+        size="160"
+        maxlength="50"
         placeholder="댓글을 남겨보세요!"
-        aria-label="댓글입력"
-        aria-describedby="button-addon2"
       />
-      <button
-        onclick="save_comment()"
-        class="btn btn-outline-secondary"
-        type="button"
-        id="button-addon2"
-      >
-        확인
-      </button>
+      <button type="button" class="btn btn-success">확인</button>
     </div>
     <div class="mycards" id="comment-list">
       <div class="card">
