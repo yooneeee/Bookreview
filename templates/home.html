@@ -35,6 +35,19 @@
                 align-items: center;
                 justify-content: center;
             }
+
+            .mytitle > button {
+                width: 140px;
+                height: 50px;
+
+                background-color: transparent;
+                color: white;
+
+                border-radius: 50px;
+                border: 2px solid white;
+
+                margin: 0px auto 70px auto;
+            }
     
             .mytitle > button:hover {
                 border: 2px solid white;
@@ -48,7 +61,7 @@
             }
 
             .mytitle > h1 {
-                margin-bottom: 100px;
+                margin-bottom: 10px;
             }
 
             .btn {
@@ -61,30 +74,71 @@
             .header-menu {
                 display: flex;
             }
+            .card-desc {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         </style>
         <script>
-
             //로그인 여부에 따라 다르게 보여지도록
             $(document).ready(function(){
-                let isLoggedIn = false; 
+                listing();
+                fetch('/nick').then((res) => res.json()).then((data) => {
+                    let isLoggedIn = data['nickname']
 
-                console.log(isLoggedIn)
-
-                let loginBtn = document.getElementById("loginBtn");
-                let registerBtn = document.getElementById("registerBtn");
-                let welcomeMsg = document.getElementById("welcomeMsg");   
-
-                if (isLoggedIn == null) {
-                    welcomeMsg.style.display = "block";
-                    loginBtn.style.display = "none";
-                    registerBtn.style.display = "none";
-                } else {
-                    welcomeMsg.style.display = "none";
-                    loginBtn.style.display = "block";
-                    registerBtn.style.display = "block";
-                }
-
+                    if (isLoggedIn == null) {
+                        let temp_html = `<div class = "header">
+                                            <div class="header-menu">
+                                                <button type="button" class="btn btn-outline-dark" id="loginBtn" onclick="login()">로그인</button>
+                                                <button type="button" class="btn btn-outline-dark" id="registerBtn" onclick="register()">회원가입</button>
+                                            </div>
+                                        </div>`
+                        $("#header").append(temp_html);                
+                    } else {
+                        let temp_html = `<div class = "header">
+                                            <div class="header-menu">
+                                                <p>${isLoggedIn}님 환영합니다.<p>
+                                                <button type="button" class="btn btn-outline-dark" style="display: none;" id="welcomeMsg" onclick="">로그아웃</button>
+                                            </div>
+                                        </div>`
+                        $("#header").append(temp_html);
+                    } 
+                })
             });
+
+            function listing() {
+            fetch('/rbook').then(res => res.json()).then(data => {
+                let rows = data['result']
+                $('#cards-box').empty()
+                rows.forEach((a) => {
+                    let comment = a['comment']
+                    let desc = a['desc'] 
+                    let title = a['title']
+                    let image = a['image']
+                    let star = a['star']
+                    let uid = a['keyid']
+
+                    console.log(uid)
+
+                    let star_repeat = '⭐'.repeat(star)
+
+                    let temp_html = `<div class="col">
+                                            <div class="card h-100">
+                                                <img src="${image}" class="card-img-top" onclick="detail_link()">
+                                                    <input type="text" name="uid" value='${uid}'>
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${title}</h5>
+                                                    <p class="card-desc">${desc}</p>
+                                                    <p>${star_repeat}</p>
+                                                    <p class="mycomment">${comment}</p>
+                                                </div>
+                                            </div>
+                                        </div>`
+                    $('#cards-box').append(temp_html)
+                    })
+                })
+            }
         
             //회원가입 페이지로 이동
             function register() {
@@ -96,12 +150,14 @@
                 window.location.href = '/login'
             }    
 
-            function a() {
-                window.location.href = '/rpage'
+            //도서 리뷰 등록 페이지로 이동
+            function reviewPost_Page() {
+                window.location.href = "/rpage"
             }
 
-            function b() {
-                window.location.href = '/detail'
+            //도세 상세보기 페이지로 이동
+            function detail_link() {
+                window.location.href = "/detail"
             }
             
         </script>
@@ -111,21 +167,29 @@
             <div class="container" id="header">
                 <div class = "header">
                     <div class="header-menu">
-                        <!-- 로그인 안했을 경우 -->
-                        <button type="button" class="btn btn-outline-dark" id="loginBtn" onclick="login()">로그인</button>
-                        <button type="button" class="btn btn-outline-dark" id="registerBtn" onclick="register()">회원가입</button>
-                        <!-- 로그인 했을 경우 -->
-                        <button type="button" class="btn btn-outline-dark" style="display: none;" id="welcomeMsg" onclick="">로그아웃</button>
                     </div>
                 </div>
             </div>
             <h1>Book Review</h1>
+            <button onclick="reviewPost_Page()">리뷰 작성하기</button>
         </div>
-
-        
-        <button onclick="a()">리뷰 등록 페이지로 이동</button>
-        <button onclick="b()">상세 페이지로 이동</button>
-
+  
+        <div class="mycards" style="cursor:pointer;">
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+                            class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">도서 제목</h5>
+                            <p>⭐⭐⭐</p>
+                            <p class="card-desc">책소개</p>
+                            <p class="mycomment">나의 한줄 평을 씁니다</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </body>
 </html>
