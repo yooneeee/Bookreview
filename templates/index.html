@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>메인</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+
+        function register() {
+            window.location.href = 'register.html'
+        }
+
+        function login() {
+            window.location.href = 'login.html'
+        }
+
+        function logout() {
+            $.removeCookie('mytoken');
+            alert('로그아웃!')
+            window.location.href = 'index.html'
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <button class="button is-primary" onclick="register()">가입하기</button>
+    <button class="button is-primary" onclick="login()">로그인하기</button>
+    <button class="button is-danger" onclick="logout()">로그아웃</button>
+
+
+</body>
+
+</html>
